@@ -1,12 +1,18 @@
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .reports import transaction_report
+
 from .models import Currency, Category, Transaction
-from .serializers import CurrencySerializer, CategorySerializer, WriteTransactionSerializer, ReadTransactionSerializer
+from .serializers import CurrencySerializer, CategorySerializer, WriteTransactionSerializer, ReadTransactionSerializer, \
+    ReportEntrySerializer, ReportParamsSerializer
 
 
 class CurrencyListAPIView(ListAPIView):
+    permission_classes = (AllowAny,)
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
     pagination_class = None
@@ -38,3 +44,16 @@ class TransactionModelViewSet(viewsets.ModelViewSet):
 
     # def perform_create(self, serializer):
     #     serializer.save(user=self.request.user)
+
+
+class TransactionReportApiView(APIView):
+
+    @staticmethod
+    def get(request):
+        params_serializer = ReportParamsSerializer(data=request.GET, context={'request': request})
+        params_serializer.is_valid(raise_exception=True)
+        params = params_serializer.save()
+
+        data = transaction_report(params)
+        serializer = ReportEntrySerializer(instance=data, many=True)
+        return Response(data=serializer.data)
