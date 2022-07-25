@@ -22,5 +22,5 @@ urlpatterns = [
     path('login/', obtain_auth_token, name='obtain_auth_token'),
     path('api/', include('core.urls')),
     path('admin/', admin.site.urls),
-    path('currencies/', views.CurrencyListAPIView.as_view(), name='currencies'),
+    # path('currencies/', views.CurrencyModelViewSet.as_view(), name='currencies'),
 ]

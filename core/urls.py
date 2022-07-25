@@ -4,6 +4,7 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'category', views.CategoryModelViewSet)
+router.register(r'currency', views.CurrencyModelViewSet)
 router.register(r'transaction', views.TransactionModelViewSet, basename='transaction')
 # router.register(r'report', views.TransactionReportApiView.as_view(),basename='report')
 # urlpatterns = router.urls

@@ -1,9 +1,10 @@
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly, DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from .permissions import IsAdminOrReadOnly
 from .reports import transaction_report
 
 from .models import Currency, Category, Transaction
@@ -11,15 +12,15 @@ from .serializers import CurrencySerializer, CategorySerializer, WriteTransactio
     ReportEntrySerializer, ReportParamsSerializer
 
 
-class CurrencyListAPIView(ListAPIView):
-    permission_classes = (AllowAny,)
+class CurrencyModelViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminOrReadOnly,)
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
     pagination_class = None
 
 
 class CategoryModelViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (DjangoModelPermissions,)
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
